@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><link rel="icon" type="image/jpg" sizes="32x32" href="4.jpg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peakpath</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #20B2AA; /* Sea Green */
+            color: #333; /* Darker text color for better contrast */
+        }
+        header {
+            background-color: #f0f0f0;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+        .profile img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+        .login-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 1rem;
+        }
+        .login-link:hover {
+            text-decoration: underline;
+        }
+        .profile-details {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            top: 40px;
+            left: 0;
+            z-index: 1000;
+        }
+        .profile-details.active {
+            display: block;
+        }
+        .coins {
+            margin-right: 1rem;
+        }
+        main {
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            border-radius: 10px;
+            margin: 1rem;
+        }
+        .search-bar {
+            margin-bottom: 1rem;
+        }
+        .upcoming-workshops {
+            margin-bottom: 2rem;
+        }
+        .upcoming-workshops h2 {
+            margin-bottom: 1rem;
+        }
+        .video-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .video {
+            width: 300px;
+            margin-bottom: 1rem;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .video iframe {
+            width: 100%;
+            height: 169px; /* 16:9 aspect ratio */
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .tabs li {
+            margin: 0 1rem;
+        }
+        .tabs li a {
+            color: #fff;
+            text-decoration: none;
+        }
+        /* Tab Content Styling */
+        .tab-content {
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none; /* Hide all tab content by default */
+            background-color: #fff;
+        }
+        .tab-content.active {
+            display: block; /* Show active tab content */
+        }
+        .planner-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .planner-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .planner-item input[type="text"] {
+            flex-grow: 1;
+            margin-right: 10px;
+            padding: 5px;
+        }
+        .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #add-item-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #premium-btn {
+            background-color: #FFD700;
+            color: #333;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #premium-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #ff3333;
+        }
+        .btn:disabled {
+            background-color: #ffb3b3;
+            cursor: not-allowed;
+        }
+        #add-item-btn {
+            background-color: #4CAF50;
+        }
+        #add-item-btn:hover {
+            background-color: #45a049;
+        }
+        #undo-btn, #redo-btn {
+            font-size: 1.2em;
+            padding: 12px 20px;
+        }
+        #pay-btn {
+            background-color: #4CAF50;
+        }
+        #pay-btn:hover {
+            background-color: #45a049;
+        }
+        .workshop-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .workshop {
+            width: 300px;
+            margin-bottom: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .workshop img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .workshop-info {
+            padding: 1rem;
+        }
+        .workshop-info h3 {
+            margin-top: 0;
+        }
+        .enroll-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .enroll-btn:hover {
+            background-color: #45a049;
+        }
+        .enroll-btn.enrolled {
+            background-color: #2196F3;
+        }
+        #premium-advantages {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        #premium-advantages ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+        #see-advantages-btn, #premium-btn, #pay-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        #see-advantages-btn:hover, #premium-btn:hover, #pay-btn:hover {
+            background-color: #45a049;
+        }
+        .courses-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .course-column {
+            width: 48%;
+        }
+        .course-item {
+            background-color: #f0f0f0;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .course-item:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="profile" id="profile">
+           <img src="proflie.png" alt="Profile" id="profile-image">
+           <span id="user-name">Guest</span>
+           <div class="profile-details" id="profile-details">
+               <p>User: <span id="profile-user-name"></span></p>
+               <button id="logout-btn">Logout</button>
+           </div>
+        </div>
+        <a href="login.html" class="login-link" id="login-link">Login</a>
+        <div class="coins" id="coins-display">
+            Coins: 100
+        </div>
+    </header>
+
+    <main>
+        <div class="search-bar">
+            <input type="text" placeholder="Search...">
+        </div><br><br>
+        <div class="upcoming-workshops">
+            <h2 style="font-family: 'Baskerville', serif; font-size: 37px; font-weight: bold; color: #333;">
+            Continue Courses </h2><br><br>
+
+            <div class="video-container">
+                <div class="video">
+                    <iframe src="https://www.youtube.com/embed/4x7MkLDGnu8" frameborder="0" allowfullscreen></iframe>
+                    <p><b>How to stop procrastinating?</b></p>
+                    <button class="watch-btn" data-video="1">Watch (10 coins)</button>
+                </div>
+                <div class="video">
+                    <iframe src="https://www.youtube.com/embed/-moW9jvvMr4" frameborder="0" allowfullscreen></iframe>
+                    <p><b>Simple ways to break bad habits</b></p>
+                    <button class="watch-btn" data-video="2">Watch (10 coins)</button>
+                </div>
+                <div class="video">
+                    <iframe src="https://www.youtube.com/embed/LKXzmh6vKx8" frameborder="0" allowfullscreen></iframe>
+                    <p><b>How to master time?</b></p>
+                    <button class="watch-btn" data-video="3">Watch (10 coins)</button>
+                </div>
+            </div>
+        </div>
+        <!-- Tab Content Areas -->
+        <div class="tab-content active" id="planner-tab">
+            <h2>Planner</h2>
+            <ul id="planner-list" class="planner-list">
+                <!-- Planner items will be added here dynamically -->
+            </ul>
+            <button id="add-item-btn">Add Item</button>
+            <button id="reset-planner-btn">Reset Planner</button>
+            <button id="undo-btn" disabled>Undo</button>
+            <button id="redo-btn" disabled>Redo</button>
+        </div>
+        <div class="tab-content" id="workshops-tab">
+            <h2>Workshops</h2>
+            <div class="workshop-container">
+                <div class="workshop">
+                    <img src="1.jpg" alt="Workshop 1">
+                    <div class="workshop-info">
+                        <h3>Introduction to Mindfulness</h3>
+                        <p>Learn the basics of mindfulness and how it can improve your daily life.</p>
+                        <button class="enroll-btn">Enroll Now</button>
+                    </div>
+                </div>
+                <div class="workshop">
+                    <img src="2.jpg" alt="Workshop 2">
+                    <div class="workshop-info">
+                        <h3>Time Management Mastery</h3>
+                        <p>Discover effective strategies to manage your time and boost productivity.</p>
+                        <button class="enroll-btn">Enroll Now</button>
+                    </div>
+                </div>
+                <div class="workshop">
+                    <img src="3.jpg" alt="Workshop 3">
+                    <div class="workshop-info">
+                        <h3>Stress Reduction Techniques</h3>
+                        <p>Explore various methods to reduce stress and improve your overall well-being.</p>
+                        <button class="enroll-btn">Enroll Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content" id="courses-tab">
+            <h2>Courses</h2>
+            <div class="courses-container">
+                <div class="course-column">
+                    <h3>Paid Courses</h3>
+                    <div class="course-item paid-course">Advanced Mindfulness Techniques</div>
+                    <div class="course-item paid-course">Leadership Mastery</div>
+                    <div class="course-item paid-course">Advanced Time Management</div>
+                    <div class="course-item paid-course">Emotional Intelligence in the Workplace</div>
+                    <div class="course-item paid-course">Stress Management for Executives</div>
+                </div>
+                <div class="course-column">
+                    <h3>Free Courses</h3>
+                    <div class="course-item free-course" data-embed="jPpUNAFHgxM">Introduction to Meditation</div>
+                    <div class="course-item free-course" data-embed="T4dser6ssp0">Basic Time Management Skills</div>
+                    <div class="course-item free-course" data-embed="Nz9eAaXRzGg">Stress Relief Techniques</div>
+                    <div class="course-item free-course" data-embed="2Yw6dFQBklA">Improving Communication Skills</div>
+                    <div class="course-item free-course" data-embed="XpKvs-apvOs">Goal Setting for Beginners</div>
+                    <div class="course-item free-course" data-embed="videoseries?list=PLvcnLZz9BxKxaoTDH-jzZYTbXd7Ha9-rb">Introduction to Positive Psychology</div>
+                    <div class="course-item free-course" data-embed="tbKr0EuiVjc">Basics of Emotional Intelligence</div>
+                    <div class="course-item free-course" data-embed="Zz59q8wHECk">Introduction to Work-Life Balance</div>
+                </div>
+            </div>
+            <div id="video-container" style="display: none;">
+                <h3 id="video-title"></h3>
+                <iframe width="560" height="315" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+        </div>
+        <div class="tab-content" id="premium-tab">
+            <h2>Premium</h2>
+            <p>Unlock premium features for 1000 coins or pay $5!</p>
+            <button id="see-advantages-btn">See Advantages</button>
+            <div id="premium-advantages">
+                <ul>
+                    <li>App usage restrictors</li>
+                    <li>Customized planners</li>
+                    <li>Chat with experts</li>
+                    <li>Access to paid content</li>
+                </ul>
+            </div>
+            <button id="premium-btn">Get Premium (1000 coins)</button>
+            <button id="pay-btn">Pay $5</button>
+        </div>
+    </main>
+
+    <footer>
+        <ul class="tabs">
+            <li><a href="#" data-tab="planner-tab">Planner</a></li>
+            <li><a href="#" data-tab="workshops-tab">Workshops</a></li>
+            <li><a href="#" data-tab="courses-tab">Courses</a></li>
+            <li><a href="#" data-tab="premium-tab">Premium</a></li>
+        </ul>
+    </footer>
+
+    <script>
+        let coins = 100;
+        const coinsDisplay = document.getElementById('coins-display');
+        const premiumBtn = document.getElementById('premium-btn');
+        const plannerList = document.getElementById('planner-list');
+        const addItemBtn = document.getElementById('add-item-btn');
+        const resetPlannerBtn = document.getElementById('reset-planner-btn');
+        const undoBtn = document.getElementById('undo-btn');
+        const redoBtn = document.getElementById('redo-btn');
+        const payBtn = document.getElementById('pay-btn');
+
+        let plannerHistory = [];
+        let historyIndex = -1;
+
+        function updateCoins(amount) {
+            coins += amount;
+            coinsDisplay.textContent = `Coins: ${coins}`;
+            premiumBtn.disabled = coins < 1000;
+        }
+
+        // Watch video functionality
+        const watchBtns = document.querySelectorAll('.watch-btn');
+        watchBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                updateCoins(10);
+                btn.disabled = true;
+                btn.textContent = 'Watched';
+            });
+        });
+
+        // Planner functionality
+        function createPlannerItem() {
+            const li = document.createElement('li');
+            li.className = 'planner-item';
+            li.innerHTML = `
+                <input type="text" placeholder="Enter your note here">
+                <button class="delete-btn">Delete</button>
+            `;
+            plannerList.appendChild(li);
+
+            const deleteBtn = li.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', () => {
+                plannerList.removeChild(li);
+                saveState();
+            });
+
+            saveState();
+        }
+
+        function saveState() {
+            plannerHistory = plannerHistory.slice(0, historyIndex + 1);
+            plannerHistory.push(plannerList.innerHTML);
+            historyIndex++;
+            updateUndoRedoButtons();
+        }
+
+        function updateUndoRedoButtons() {
+            undoBtn.disabled = historyIndex <= 0;
+            redoBtn.disabled = historyIndex >= plannerHistory.length - 1;
+        }
+
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                plannerList.innerHTML = plannerHistory[historyIndex];
+                updateUndoRedoButtons();
+            }
+        }
+
+        function redo() {
+            if (historyIndex < plannerHistory.length - 1) {
+                historyIndex++;
+                plannerList.innerHTML = plannerHistory[historyIndex];
+                updateUndoRedoButtons();
+            }
+        }
+
+        function resetPlanner() {
+            plannerList.innerHTML = '';
+            saveState();
+        }
+
+        addItemBtn.addEventListener('click', createPlannerItem);
+        resetPlannerBtn.addEventListener('click', resetPlanner);
+        undoBtn.addEventListener('click', undo);
+        redoBtn.addEventListener('click', redo);
+
+        // Premium functionality
+        premiumBtn.addEventListener('click', () => {
+            if (coins >= 1000) {
+                updateCoins(-1000);
+                alert('Congratulations! You now have premium access.');
+                premiumBtn.disabled = true;
+                premiumBtn.textContent = 'Premium Activated';
+            }
+        });
+
+        // Tab Navigation
+        const tabs = document.querySelectorAll('.tabs li a');
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (event) => {
+                event.preventDefault();
+                const targetTab = event.target.getAttribute('data-tab');
+                tabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(targetTab).classList.add('active');
+            });
+        });
+
+        // Initialize
+        updateCoins(0);
+        saveState();
+
+        payBtn.addEventListener('click', () => {
+            window.location.href = 'https://peakkpath.com';
+        });
+
+        function updateUserName() {
+            const userName = localStorage.getItem('userName');
+            const userNameElement = document.getElementById('user-name');
+            const profileUserNameElement = document.getElementById('profile-user-name');
+            const loginLink = document.getElementById('login-link');
+            const profileImage = document.getElementById('profile-image');
+            const profileDetails = document.getElementById('profile-details');
+
+            console.log('Stored userName:', userName); // Debugging line
+
+            if (userName) {
+                userNameElement.textContent = userName;
+                profileUserNameElement.textContent = userName;
+                loginLink.style.display = 'none';
+                profileImage.style.display = 'inline';
+                profileDetails.style.display = 'none';
+                console.log('User logged in:', userName); // Debugging line
+            } else {
+                userNameElement.textContent = 'Guest';
+                loginLink.style.display = 'inline';
+                profileImage.style.display = 'none';
+                profileDetails.style.display = 'none';
+                console.log('No user logged in'); // Debugging line
+            }
+        }
+
+        // Make profile name tappable
+        const profileElement = document.getElementById('profile');
+        const profileDetails = document.getElementById('profile-details');
+
+        profileElement.addEventListener('click', function() {
+            if (localStorage.getItem('userName')) {
+                profileDetails.classList.toggle('active');
+                console.log('Profile clicked, userName:', localStorage.getItem('userName')); // Debugging line
+            }
+        });
+
+        // Logout functionality
+        const logoutBtn = document.getElementById('logout-btn');
+        logoutBtn.addEventListener('click', function() {
+            localStorage.removeItem('userName');
+            updateUserName();
+            profileDetails.classList.remove('active');
+            console.log('User logged out'); // Debugging line
+        });
+
+        // Call this function when the page loads
+        updateUserName();
+
+        // Debugging: Log localStorage content
+        console.log('localStorage content:', localStorage);
+
+        // Enroll button functionality
+        const enrollButtons = document.querySelectorAll('.enroll-btn');
+        enrollButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (this.textContent === 'Enroll Now') {
+                    this.textContent = 'Done!';
+                    this.classList.add('enrolled');
+                } else {
+                    this.textContent = 'Enroll Now';
+                    this.classList.remove('enrolled');
+                }
+            });
+        });
+
+        // Premium advantages functionality
+        const seeAdvantagesBtn = document.getElementById('see-advantages-btn');
+        const premiumAdvantages = document.getElementById('premium-advantages');
+
+        seeAdvantagesBtn.addEventListener('click', function() {
+            if (premiumAdvantages.style.display === 'none' || premiumAdvantages.style.display === '') {
+                premiumAdvantages.style.display = 'block';
+                seeAdvantagesBtn.textContent = 'Hide Advantages';
+            } else {
+                premiumAdvantages.style.display = 'none';
+                seeAdvantagesBtn.textContent = 'See Advantages';
+            }
+        });
+
+        // Course item click handlers
+        const paidCourses = document.querySelectorAll('.paid-course');
+        const freeCourses = document.querySelectorAll('.free-course');
+        const videoContainer = document.getElementById('video-container');
+        const videoTitle = document.getElementById('video-title');
+        const videoFrame = videoContainer.querySelector('iframe');
+
+        paidCourses.forEach(course => {
+            course.addEventListener('click', () => {
+                alert('Only available for premium users!');
+            });
+        });
+
+        freeCourses.forEach((course) => {
+            course.addEventListener('click', () => {
+                const embedId = course.getAttribute('data-embed');
+                if (embedId) {
+                    videoTitle.textContent = course.textContent;
+                    videoFrame.src = `https://www.youtube.com/embed/${embedId}`;
+                    videoContainer.style.display = 'block';
+                    videoContainer.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
